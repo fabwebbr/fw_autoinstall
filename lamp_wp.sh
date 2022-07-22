@@ -78,7 +78,7 @@ else
  cat > /etc/apache2/sites-available/$1.conf << EOF
  <VirtualHost *:80>
     ServerAdmin admin@$1
-    DocumentRoot $SITE_DIR/$site
+    DocumentRoot /var/www/$1
     ServerName $1
     ServerAlias www.$1
 
