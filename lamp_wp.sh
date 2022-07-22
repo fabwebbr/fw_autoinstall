@@ -1,8 +1,8 @@
 #!/bin/bash
-# 
+#
 # Instalador Apache2, PHP 7.4, MySQL e WordPress
 # Feito para debian/ubuntu
-# 
+#
 # Desenvolvido por Felipe Barreto
 ############################################## 
 
@@ -10,6 +10,8 @@ if [ -z "$1" ]; then
  echo "Você não informou o domínio. O comando deve ser executado como: ./lamp_fw.sh seu-site.com.br";
  exit;
 fi
+
+echo "Iniciando o processo...."
 
 sleep 5;
 # Debug? (# = não)
@@ -39,7 +41,10 @@ else
  apt-get --yes --quiet install apache2 libapache2-mod-security2 > /dev/null 2>&1
 
  echo "Habilitando módulos..."
- a2enmod rewrite && a2enmod deflate && a2enmod expires && a2enmod http2 && a2enmod proxy && a2enmod proxy_fcgi && a2enmod ssl &&  a2enmod reqtimeout > /dev/null 2>&1
+ a2enmod rewrite > /dev/null 2>&1 && a2enmod deflate > /dev/null 2>&1 
+ a2enmod expires > /dev/null 2>&1 && a2enmod http2 > /dev/null 2>&1 
+ a2enmod proxy > /dev/null 2>&1 && a2enmod proxy_fcgi > /dev/null 2>&1 
+ a2enmod ssl > /dev/null 2>&1 && a2enmod reqtimeout > /dev/null 2>&1
  systemctl restart apache2 > /dev/null 2>&1
  
  echo "Instalando certbot para apache..."
@@ -61,15 +66,17 @@ fi
 # Instalando Mysql e configurando acesso
 echo "Instalando MySQL..."
 apt-get --yes --quiet install mysql-server > /dev/null 2>&1
+
+mysql -e "create user $user_db@localhost IDENTIFIED WITH mysql_native_password BY '$password_db'" > /dev/null 2>&1
+mysql -e "GRANT ALL PRIVILEGES ON $nome_db.* TO $user_db@localhost" > /dev/null 2>&1
+mysql -e "CREATE DATABASE $nome_db"
+mysql -e "FLUSH PRIVILEGES" > /dev/null 2>&1
+
 cat > /root/.my.cnf << EOF
 [client]
 user=$user_db
 password=$password_db
 EOF
-mysql -e "create user $user_db@localhost IDENTIFIED WITH mysql_native_password BY '$password_db'" > /dev/null 2>&1
-mysql -e "GRANT ALL PRIVILEGES ON $nome_db.* TO $user_db@localhost" > /dev/null 2>&1
-mysql -e "CREATE DATABASE $nome_db"
-mysql -e "FLUSH PRIVILEGES" > /dev/null 2>&1
 
 # Criando o site e Instalando o wp-cli
 if [ -d "/var/www/$1" ]; then
