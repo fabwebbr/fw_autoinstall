@@ -1,6 +1,7 @@
 #!/bin/bash
 # 
 # Instalador Apache2, PHP 7.4, MySQL e WordPress
+# Feito para debian/ubuntu
 # 
 # Desenvolvido por Felipe Barreto
 ############################################## 
