@@ -1,19 +1,14 @@
 #!/bin/bash
 #
-# Instalador Apache2, PHP 7.4, MySQL e WordPress
+# Objetivo do script: instalar Apache2, PHP 7.4, MySQL e WordPress de maneira automática.
 # Feito para debian/ubuntu
 #
 # Desenvolvido por Felipe Barreto
-############################################## 
+###############################################################################################
 
-if [ -z "$1" ]; then
- echo "Você não informou o domínio. O comando deve ser executado como: ./lamp_fw.sh seu-site.com.br";
- exit;
-fi
 
-echo "Iniciando o processo...."
-
-sleep 5;
+# Qual timezone usar?
+timezone="America/Sao_Paulo"
 # Debug? (# = não)
 # set -x
 # Gerador de numero aleatório
@@ -27,8 +22,17 @@ password_db=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c34)
 # Gerador de senha para o wp-admin
 adminpass_wp=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c18)
 
-
 ##############################################
+clear && sleep 5;
+if [ -z "$1" ]; then
+ echo "Você não informou o domínio. O comando deve ser executado como: ./lamp_fw.sh seu-site.com.br";
+ exit;
+fi
+
+echo "Iniciando o processo...."
+
+timedatectl set-timezone $timezone > /dev/null 2>&1
+
 apt-get --yes --quiet update > /dev/null 2>&1
 echo "As atualizações foram aplicadas"
 
@@ -45,7 +49,7 @@ else
  a2enmod expires > /dev/null 2>&1 && a2enmod http2 > /dev/null 2>&1 
  a2enmod proxy > /dev/null 2>&1 && a2enmod proxy_fcgi > /dev/null 2>&1 
  a2enmod ssl > /dev/null 2>&1 && a2enmod reqtimeout > /dev/null 2>&1
- a2dissite 000-default > /dev/null 2>&1
+ a2dissite 000-default > /dev/null 2>&1 && a2enmod headers > /dev/null 2>&1
  rm -rf /etc/apache2/sites-available/*.conf
  rm -rf /var/www/html
  systemctl restart apache2 > /dev/null 2>&1
@@ -86,7 +90,7 @@ EOF
 if [ -d "/var/www/$1" ]; then
  echo "Já existe uma pasta de $1 criada..."
 else
- touch /etc/apache2/sites-available/$1.conf
+touch /etc/apache2/sites-available/$1.conf
 cat > /etc/apache2/sites-available/$1.conf << EOF
  <VirtualHost *:80>
     ServerAdmin admin@$1
@@ -120,10 +124,10 @@ EOF
  chown www-data:www-data /var/www/ > /dev/null 2>&1
  sudo -u www-data mkdir /var/www/$1 > /dev/null 2>&1
  cd /var/www/$1
- sudo -u www-data /usr/local/bin/wp core download
- sudo -u www-data /usr/local/bin/wp core config --dbname="$nome_db" --dbuser="$user_db" --dbpass="$password_db" --dbhost="localhost" --dbprefix="wp_"
- sudo -u www-data /usr/local/bin/wp core install --url="https://$1" --title="Wordpress de $1" --admin_user="admin_${int}" --admin_password="$adminpass_wp" --admin_email="admin@$1"
-touch /var/www/credenciais.txt
+ sudo -u www-data /usr/local/bin/wp core download > /dev/null 2>&1
+ sudo -u www-data /usr/local/bin/wp core config --dbname="$nome_db" --dbuser="$user_db" --dbpass="$password_db" --dbhost="localhost" --dbprefix="wp_" > /dev/null 2>&1
+ sudo -u www-data /usr/local/bin/wp core install --url="https://$1" --title="Wordpress de $1" --admin_user="admin_${int}" --admin_password="$adminpass_wp" --admin_email="admin@$1" > /dev/null 2>&1
+touch /var/www/credenciais.txt > /dev/null 2>&1
 cat > /var/www/credenciais.txt << EOF
  URL: https://$1
  URL Admin: https://$1/wp-admin
@@ -131,9 +135,26 @@ cat > /var/www/credenciais.txt << EOF
  Admin Senha: $adminpass_wp
 
  Os dados do MySQL estão no wp-config.php
-EOF 
+EOF
+fi
+systemctl restart apache2 > /dev/null 2>&1
 
-systemctl restart apache2
+# Verifica se o domínio já resolve para este IP
+hash_validacao=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c40)
+sudo -u www-data touch /var/www/$1/validador.php
+cat > /var/www/$1/validador.php << EOF
+<?php
+echo $hash_validacao;
+?>
+EOF
+string_teste=`curl http://$1/validador.php`
+if [ $hash_validacao = $string_teste ]; then
+ certbot --quiet --apache -d $1 -d www.$1 --agree-tos --email admin@$1 > /dev/null 2>&1
+ MSGCERT1 = "| Seu domínio já está apontando para este servidor. Verifique se o SSL foi criado corretamente."
+ MSGCERT2 = "| Se não foi criado, execute manualmente: certbot --apache2 -d $1 -d www.$1"
+else
+ MSGCERT1 = "| O domínio $1 não aponta para o IP `curl ipinfo.io/ip` e por isso não foi instalado o SSL."
+ MSGCERT2 = "| Se não foi criado, execute manualmente: certbot --apache2 -d $1 -d www.$1"
 fi
 
 clear
@@ -149,8 +170,8 @@ echo "| Nome do BD: $nome_db"
 echo "| "
 echo "| Os dados de acesso ao banco de dados estão armazenados em /root/.my.cnf ou em seu wp-config.php"
 echo "| Os dados de acesso ao seu Wordpress ficarão guardados em: /var/www/credenciais.txt"
-echo "| "
-echo "| Assim que seu domínio $1 estiver apontando corretamente para o IP `curl ipinfo.io/ip` execute o certbot"
+echo $MSGCERT1
+echo $MSGCERT2
 echo "| Comando: certbot --apache2 -d $1 -d www.$1"
 echo "| "
 echo "| Boa sorte :)"
