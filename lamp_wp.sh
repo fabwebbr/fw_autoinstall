@@ -45,7 +45,11 @@ else
  a2enmod expires > /dev/null 2>&1 && a2enmod http2 > /dev/null 2>&1 
  a2enmod proxy > /dev/null 2>&1 && a2enmod proxy_fcgi > /dev/null 2>&1 
  a2enmod ssl > /dev/null 2>&1 && a2enmod reqtimeout > /dev/null 2>&1
+ a2dissite 000-default > /dev/null 2>&1
+ rm -rf /etc/apache2/sites-available/*.conf
+ rm -rf /var/www/html
  systemctl restart apache2 > /dev/null 2>&1
+ ufw allow "Apache Full" > /dev/null 2>&1
  
  echo "Instalando certbot para apache..."
  apt-get --yes --quiet install python3-certbot-apache > /dev/null 2>&1
@@ -83,7 +87,7 @@ if [ -d "/var/www/$1" ]; then
  echo "Já existe uma pasta de $1 criada..."
 else
  touch /etc/apache2/sites-available/$1.conf
- cat > /etc/apache2/sites-available/$1.conf << EOF
+cat > /etc/apache2/sites-available/$1.conf << EOF
  <VirtualHost *:80>
     ServerAdmin admin@$1
     DocumentRoot /var/www/$1
