@@ -6,9 +6,13 @@
 # Desenvolvido por Felipe Barreto
 ###############################################################################################
 
-
 # Qual timezone usar?
 timezone="America/Sao_Paulo"
+
+
+##############################################################################################
+##############################################################################################
+##############################################################################################
 # Debug? (# = não)
 # set -x
 # Gerador de numero aleatório
@@ -22,29 +26,29 @@ password_db=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c34)
 # Gerador de senha para o wp-admin
 adminpass_wp=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c18)
 
-##############################################
-clear && sleep 5;
+# Start
+clear
 if [ -z "$1" ]; then
  echo "Você não informou o domínio. O comando deve ser executado como: ./lamp_fw.sh seu-site.com.br";
  exit;
 fi
 
 echo "Iniciando o processo...."
-
 timedatectl set-timezone $timezone > /dev/null 2>&1
-
 apt-get --yes --quiet update > /dev/null 2>&1
-echo "As atualizações foram aplicadas"
+if [ ? -eq 0 ]; then
+ echo "As atualizações foram aplicadas"
+fi
 
 # Instalando Apache e habilitando módulos
 if [ -d "/etc/apache2" ]; then
- echo "Já existe uma instalação do apache. Pulando esta etapa..."; 
- sleep 10;
+ echo "APACHE: Já existe uma instalação. Pulando esta etapa..."; 
+ sleep 2;
 else
- echo "Instalando apache..."
+ echo "APACHE: Iniciando instalação"
  apt-get --yes --quiet install apache2 libapache2-mod-security2 > /dev/null 2>&1
 
- echo "Habilitando módulos..."
+ echo "APACHE: Habilitando módulos..."
  a2enmod rewrite > /dev/null 2>&1 && a2enmod deflate > /dev/null 2>&1 
  a2enmod expires > /dev/null 2>&1 && a2enmod http2 > /dev/null 2>&1 
  a2enmod proxy > /dev/null 2>&1 && a2enmod proxy_fcgi > /dev/null 2>&1 
@@ -55,28 +59,28 @@ else
  systemctl restart apache2 > /dev/null 2>&1
  ufw allow "Apache Full" > /dev/null 2>&1
  
- echo "Instalando certbot para apache..."
+ echo "APACHE + SSL: Instalando certbot para apache..."
  apt-get --yes --quiet install python3-certbot-apache > /dev/null 2>&1
 fi
 
 # Instalando php 7.4
 if [ -d "/etc/php/7.4" ]; then
- echo "A instalação do php 7.4 já existe. Pulando esta etapa..."
+ echo "PHP: A instalação do php 7.4 já existe. Pulando esta etapa..."
  apt --quiet --yes install php7.4-cli php7.4-fpm php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-bcmath php7.4-imagick php7.4-intl php7.4-soap > /dev/null 2>&1
 else
- echo "Iniciando instalação do php 7.4..."
+ echo "PHP: Iniciando instalação do php 7.4..."
  apt install php7.4 -y --quiet > /dev/null 2>&1
  apt --quiet --yes install php7.4-cli php7.4-fpm php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-bcmath php7.4-imagick php7.4-intl php7.4-soap > /dev/null 2>&1
  a2enconf php7.4-fpm > /dev/null 2>&1
- echo "Fim da instalação do PHP"
+ echo "PHP: php7.4-fpm foi instalado e está pronto para uso com apache"
 fi
 
 # Instalando Mysql e configurando acesso
-echo "Instalando MySQL..."
+echo "MYSQL: Instalando MySQL..."
 apt-get --yes --quiet install mysql-server > /dev/null 2>&1
 
 mysql -e "create user $user_db@localhost IDENTIFIED WITH mysql_native_password BY '$password_db'" > /dev/null 2>&1
-mysql -e "GRANT ALL PRIVILEGES ON $nome_db.* TO $user_db@localhost" > /dev/null 2>&1
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO $user_db@localhost" > /dev/null 2>&1
 mysql -e "CREATE DATABASE $nome_db"
 mysql -e "FLUSH PRIVILEGES" > /dev/null 2>&1
 
@@ -85,10 +89,11 @@ cat > /root/.my.cnf << EOF
 user=$user_db
 password=$password_db
 EOF
+echo "MYSQL: Bancos de dados e usuário configurados"
 
 # Criando o site e Instalando o wp-cli
 if [ -d "/var/www/$1" ]; then
- echo "Já existe uma pasta de $1 criada..."
+ echo "WORDPRESS: Já existe uma pasta de $1 criada..."
 else
 touch /etc/apache2/sites-available/$1.conf
 cat > /etc/apache2/sites-available/$1.conf << EOF
@@ -170,8 +175,8 @@ echo "| Nome do BD: $nome_db"
 echo "| "
 echo "| Os dados de acesso ao banco de dados estão armazenados em /root/.my.cnf ou em seu wp-config.php"
 echo "| Os dados de acesso ao seu Wordpress ficarão guardados em: /var/www/credenciais.txt"
-echo $MSGCERT1
-echo $MSGCERT2
+echo "$MSGCERT1"
+echo "$MSGCERT2"
 echo "| Comando: certbot --apache2 -d $1 -d www.$1"
 echo "| "
 echo "| Boa sorte :)"
