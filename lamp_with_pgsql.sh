@@ -76,6 +76,11 @@ EOF
  echo "MySQL: Instalação do MySQL concluída com sucesso"
 fi
 
+if [[ "$PSQL" == "1" ]]; then
+ echo "Instalando Postgresql"
+ apt-get --yes install postgresql postgresql-contrib > /dev/null 2>&1
+fi
+
 wget https://github.com/fabwebbr/lemp_fw/raw/main/modelo-vhost-nginx.txt -O /root/modelo-vhost-nginx.txt
 
 clear
