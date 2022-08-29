@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Objetivo do script: instalar Nginx + Certbot, PHP 7.4, MySQL.
+# Objetivo do script: instalar Apache + Certbot, PHP 7.4, MySQL/Postgresql.
 # Feito para debian/ubuntu
 #
 # Desenvolvido por Felipe Barreto
@@ -13,7 +13,10 @@ timezone="America/Sao_Paulo"
 VERSAO="7.4"
 
 # Instalar mysql? (0 = não, 1 = sim)
-MYSQL="1"
+MYSQL="0"
+
+# Instalar PostgreSQL Server? (0 = não, 1 = sim)
+PSQL="0"
 
 ##############################################################################################
 ##############################################################################################
@@ -81,7 +84,7 @@ if [[ "$PSQL" == "1" ]]; then
  apt-get --yes install postgresql postgresql-contrib > /dev/null 2>&1
 fi
 
-wget https://github.com/fabwebbr/lemp_fw/raw/main/modelo-vhost-nginx.txt -O /root/modelo-vhost-nginx.txt
+wget https://github.com/fabwebbr/fw_autoinstall/raw/main/modelo-vhost-apache.txt -O /root/modelo-vhost-apache.txt
 
 clear
 echo "-----------------------------------------------------------------"
@@ -91,11 +94,8 @@ echo ""
 echo " Use o arquivo modelo 'modelo-vhost-nginx.txt' que está em seu "
 echo " '/root/' para criar um domínio em seu servidor."
 echo ""
-echo " Os dados de acesso ao seu MySQL pelo terminal são:"
+echo " Os dados de acesso ao seu MySQL pelo terminal são foram salvos em /root/.my.cnf (Se instalação for habilitada)"
 echo " "
-echo " Servidor: localhost (Porta 3306)"
-echo " Usuário: admin_${int}"
-echo " Senha: $password_db"
 echo " "
 echo " Com essas credenciais você pode gerenciar seus bancos de dados."
 echo " "
