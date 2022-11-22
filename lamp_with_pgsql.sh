@@ -13,7 +13,7 @@ timezone="America/Sao_Paulo"
 VERSAO="7.4"
 
 # Instalar mysql? (0 = não, 1 = sim)
-MYSQL="0"
+MYSQL="1"
 
 # Instalar PostgreSQL Server? (0 = não, 1 = sim)
 PSQL="0"
@@ -62,14 +62,14 @@ fi
  echo "PHP: Iniciando instalação do php ${VERSAO}..."
  apt install php${VERSAO} -y --quiet > /dev/null 2>&1
  apt --yes install php${VERSAO}-cli php${VERSAO}-fpm php${VERSAO}-mysql php${VERSAO}-zip php${VERSAO}-gd php${VERSAO}-mbstring php${VERSAO}-curl php${VERSAO}-xml php${VERSAO}-bcmath php${VERSAO}-imagick php${VERSAO}-intl php${VERSAO}-soap php${VERSAO}-pgsql > /dev/null 2>&1
- echo "PHP: php${VERSAO}-fpm foi instalado e está pronto para uso com Nginx"
+ echo "PHP: php${VERSAO}-fpm foi instalado e está pronto para uso com Apache2"
 
 # Instalar mysql
 if [[ "$MYSQL" == "1"]]; then
  echo "MySQL: Iniciando a instalação do MySQL Server"
  apt-get --yes --quiet install mysql-server > /dev/null 2>&1
  mysql -e "create user admin_${int}@localhost IDENTIFIED WITH mysql_native_password BY '$password_db'" > /dev/null 2>&1
- mysql -e "GRANT ALL PRIVILEGES ON *.* TO admin_${int}@localhost" > /dev/null 2>&1
+ mysql -e "GRANT ALL ON *.* TO admin_${int}@localhost" > /dev/null 2>&1
  mysql -e "FLUSH PRIVILEGES" > /dev/null 2>&1
 cat > /root/.my.cnf << EOF
 [client]

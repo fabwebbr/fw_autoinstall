@@ -62,6 +62,8 @@ else
 fi
 
 # Instalando php 7.4
+sudo add-apt-repository ppa:ondrej/php --quiet > /dev/null 2>&1
+sudo apt update --quiet > /dev/null 2>&1
 if [ -d "/etc/php/${PHP}" ]; then
  echo "PHP: A instalação do php ${PHP} já existe. Pulando esta etapa..."
  apt --quiet --yes install php${PHP}-cli php${PHP}-fpm php${PHP}-mysql php${PHP}-zip php${PHP}-gd php${PHP}-mbstring php${PHP}-curl php${PHP}-xml php${PHP}-bcmath php${PHP}-imagick php${PHP}-intl php${PHP}-soap > /dev/null 2>&1
@@ -70,7 +72,7 @@ else
  apt install php${PHP} -y --quiet > /dev/null 2>&1
  apt --quiet --yes install php${PHP}-cli php${PHP}-fpm php${PHP}-mysql php${PHP}-zip php${PHP}-gd php${PHP}-mbstring php${PHP}-curl php${PHP}-xml php${PHP}-bcmath php${PHP}-imagick php${PHP}-intl php${PHP}-soap > /dev/null 2>&1
  a2enconf php${PHP}-fpm > /dev/null 2>&1
- echo "PHP: php${PHP}-fpm foi instalado e está pronto para uso com apache"
+ echo "PHP: php${PHP}-fpm foi instalado e está pronto para uso com Apache2"
 fi
 
 # Instalando Mysql e configurando acesso
@@ -78,7 +80,7 @@ echo "MYSQL: Instalando MySQL..."
 apt-get --yes --quiet install mysql-server > /dev/null 2>&1
 
 mysql -e "create user $user_db@localhost IDENTIFIED WITH mysql_native_password BY '$password_db'" > /dev/null 2>&1
-mysql -e "GRANT ALL PRIVILEGES ON *.* TO $user_db@localhost" > /dev/null 2>&1
+mysql -e "GRANT ALL ON *.* TO $user_db@localhost" > /dev/null 2>&1
 mysql -e "CREATE DATABASE $nome_db"
 mysql -e "FLUSH PRIVILEGES" > /dev/null 2>&1
 
@@ -87,7 +89,7 @@ cat > /root/.my.cnf << EOF
 user=$user_db
 password=$password_db
 EOF
-echo "MYSQL: Bancos de dados e usuário configurados"
+echo "MYSQL: Usuário do banco de dados configurado"
 
  wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp > /dev/null 2>&1
  chmod +x /usr/local/bin/wp > /dev/null 2>&1
