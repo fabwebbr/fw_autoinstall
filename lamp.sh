@@ -74,15 +74,16 @@ echo "MYSQL: Instalando MySQL..."
 apt-get --yes --quiet install mysql-server > /dev/null 2>&1
 systemctl restart apache2 > /dev/null 2>&1
 
+wget https://github.com/fabwebbr/fw_autoinstall/raw/main/modelo-vhost-apache.txt -O /root/modelo-vhost.txt
+
 clear
 echo "-----------------------------------------------------------------------------------------------------------------"
 echo "| A instalação do apache, php e mysql foram concluídas. "
 echo "| Detalhes: "
 echo "| "
 echo "| Pasta dos sites: /var/www/"
-echo "| Admin senha: $adminpass_wp"
-echo "| Nome do BD: $nome_db"
 echo "| "
+echo "| Na raíz da conta root o arquivo 'modelo-vhost.txt' foi deixado para ser usado como modelo para novos vhosts."
 echo "| "
 echo "| Boa sorte :)"
 echo "-----------------------------------------------------------------------------------------------------------------"
