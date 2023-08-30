@@ -6,19 +6,19 @@
     </FilesMatch>
 
     # ServerAdmin = email do admin do server; DocumentRoot = pasta onde fica o site
-    ServerAdmin suporte@fabweb.com.br
-    DocumentRoot /var/www/fabweb.com.br
+    ServerAdmin suporte@NOMEDOMINIO
+    DocumentRoot /var/www/CAMINHO/NOMEDOMINIO
 
     # Nome do site e alias
-    ServerName fabweb.com.br
-    ServerAlias www.fabweb.com.br
+    ServerName NOMEDOMINIO
+    ServerAlias www.NOMEDOMINIO
 
     # Arquivos de log
-    ErrorLog ${APACHE_LOG_DIR}/fabweb.com.br-error.log
-    #CustomLog ${APACHE_LOG_DIR}/fabweb.com.br-access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/NOMEDOMINIO-error.log
+    #CustomLog ${APACHE_LOG_DIR}/NOMEDOMINIO-access.log combined
 
     # Ajuste o diretório
-    <Directory /var/www/fabweb.com.br>
+    <Directory /var/www/CAMINHO/NOMEDOMINIO>
         Options -Indexes -FollowSymLinks +SymLinksIfOwnerMatch
         AllowOverride All
         Require all granted
