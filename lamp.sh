@@ -70,10 +70,11 @@ else
  a2enmod headers > /dev/null 2>&1
  systemctl restart apache2 > /dev/null 2>&1
  ufw allow "Apache Full" > /dev/null 2>&1
- 
  echo "APACHE + SSL: Instalando certbot para apache..."
  apt-get --yes install python3-certbot-apache > /dev/null 2>&1
 fi
+ wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/index.php -O /var/www/html/index.html
+ wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/logo.png -O /var/www/html/logo.png
 
 # Instalando php 7.4
 sudo add-apt-repository ppa:ondrej/php --quiet > /dev/null 2>&1
