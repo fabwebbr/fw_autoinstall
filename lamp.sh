@@ -50,9 +50,6 @@ clear
 echo "Iniciando o processo...."
 timedatectl set-timezone $timezone > /dev/null 2>&1
 apt-get --yes update > /dev/null 2>&1
-if [ ? -eq 0 ]; then
- echo "As atualizações foram aplicadas"
-fi
 
 # Instalando Apache e habilitando módulos
 if [ -d "/etc/apache2" ]; then
@@ -73,7 +70,7 @@ else
  echo "APACHE + SSL: Instalando certbot para apache..."
  apt-get --yes install python3-certbot-apache > /dev/null 2>&1
 fi
- wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/index.php -O /var/www/html/index.html
+ wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/index.html -O /var/www/html/index.html
  wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/logo.png -O /var/www/html/logo.png
 
 # Instalando php 7.4

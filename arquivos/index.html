@@ -1,0 +1,120 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Bem vindo!</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+        }
+        html {
+            font-size: 10px;
+            font-family: 'Open Sans', sans-serif;
+            color: #1d2a3b;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .container.card {
+            margin-top: 12.3rem;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: -5px -4px 47px 3px rgba(198, 198, 198, 0.3);
+            text-align: center;
+            padding: 3.6rem;
+            /* padding-bottom: 3.6rem; */
+        }
+        .title-main {
+            font-size: 3.6rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 2.1rem;
+        }
+        .main-image svg {
+            max-width: 61rem;
+            margin-bottom: 2rem;
+        }
+
+        .subheading{
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 3rem;
+        }
+
+        .subheading2{
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: green;
+            margin-bottom: 1rem;
+        }
+
+        .card .text {
+            font-size: 13px;
+            letter-spacing: 0.26px;
+
+        }
+        footer {
+            color: #b1b1b1;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.7rem;
+        }
+        footer .logo svg {
+            width: 145px;
+            padding-left: 11px;
+        }
+        footer .left-side {
+            display: flex;
+            align-items: center;
+        }
+        /* Medias */
+        @media screen and (max-width: 1024px){
+            .container {max-width: 90%;}
+        @media screen and (max-width: 768px){
+            html {font-size: 7px;}
+            .container {
+                max-width: 90%;}
+            .container.card {margin-top: 6rem;}
+            .card .text { font-size: 1.6rem;}
+        } 
+        @media screen and (max-width: 480px){
+            html {font-size: 5.7px;}
+            .container {max-width: 95%;}
+            .title-main {font-size: 6.6vw;}
+            /* .container.card {margin-top: 2rem;} */
+            .subheading{font-size: 13px;}
+            .card .text { font-size: 12px;}
+            footer {flex-direction: column;}
+        } 
+        }
+    </style>
+
+</head>
+
+<body>
+    <section id="default-card" class="default-card">
+        <div class="container card">
+            <h1 class="title-main">Bem vindo!</h1>
+            <p class="subheading2">Servidor online e pronto para uso.</p>
+            <p class="subheading">Se você está vendo essa página é porque seu servidor hospedado e/ou gerenciado pela Fabweb está pronto!
+                <br>Entre em contato caso tenha alguma dúvida.</p>
+            <div class="main-image">
+                <img src="logo.png">
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>
