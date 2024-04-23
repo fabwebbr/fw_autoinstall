@@ -29,7 +29,13 @@ adminpass_wp=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c18)
 # Start
 clear
 if [ -z "$1" ]; then
- echo "Você não informou o domínio. O comando deve ser executado como: ./lamp_fw.sh seu-site.com.br";
+ echo "Você não informou o domínio. O comando deve ser executado como: ./lamp_fw.sh <seu-site.com.br> <nome-do-banco>";
+ exit;
+fi
+
+clear
+if [ -z "$2" ]; then
+ echo "Você não informou o nome do banco de dados. O comando deve ser executado como: ./lamp_fw.sh <seu-site.com.br> <nome-do-banco>";
  exit;
 fi
 
