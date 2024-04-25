@@ -1,7 +1,11 @@
 #!/bin/bash
 #
-# Objetivo do script: instalar Nginx, PHP 7.4, MySQL e criar vHost de maneira automática.
+# Objetivo do script: instalar Nginx, PHP, PHPMyAdmin, MySQL e criar vHost de maneira automática.
 # Feito para debian/ubuntu
+#
+# Lembrando que fiz isso para uso próprio e acelerar os deploys dos servidores que gerencio
+# É um script simples e que só agiliza a implantação inicial.
+# Fique a vontade para baixar, melhorar e contribuir com o código.
 #
 # Desenvolvido por Felipe Barreto
 ###############################################################################################
@@ -58,11 +62,18 @@ apt-get --yes update > /dev/null 2>&1
 # Instalar o Nginx
  echo "NGINX: Iniciando instalação"
  apt-get --yes install nginx > /dev/null 2>&1
+ if [ -d "/etc/nginx" ]; then
  ufw allow "Nginx Full" > /dev/null 2>&1
  rm -rf /var/www/html/index.html
  wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/index.html -O /var/www/html/index.html
  wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/logo.png -O /var/www/html/logo.png
  wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/info.php -O /var/www/html/info.php
+ wget https://github.com/fabwebbr/fw_autoinstall/raw/main/modelo-vhost-nginx-default.txt -O /etc/nginx/sites-available/default
+ else
+ clear
+ echo "A instalação do Nginx falhou... Abortando..."
+ exit
+ fi;
 
 # Instalando certbot para nginx
  echo "NGINX: Instalando certbot para Nginx..."
@@ -100,7 +111,7 @@ if [[ $MYSQL == "S" ]]; then
  /usr/bin/mysql -e "FLUSH PRIVILEGES"
  #PHPMyAdmin
  /usr/bin/mysql -e "CREATE USER pma_admin@localhost IDENTIFIED BY \"$password_pma\""
- /usr/bin/mysql -e "GRANT ALL PRIVILEGES ON *.* TO pma_admin@localhost WITH GRANT OPTIONS"
+ /usr/bin/mysql -e "GRANT ALL PRIVILEGES ON *.* TO pma_admin@localhost WITH GRANT OPTION"
  /usr/bin/mysql -e "FLUSH PRIVILEGES"
  echo "Banco de dados criado: "
  echo "Nome BD: $PREFIXOBD" >> /root/acessos-mysql.txt
@@ -116,14 +127,14 @@ fi
 if [[ $VH == "S" ]]; then
  wget https://github.com/fabwebbr/fw_autoinstall/raw/main/modelo-vhost-nginx.txt -O /tmp/modelo-vhost.txt
  /usr/bin/cp /tmp/modelo-vhost.txt /etc/nginx/sites-available/$DOMINIO.conf
- /usr/bin/sed -i "s/NOMEDOMINIO/$DOMINIO/g" /etc/nginx/sites-available/$DOMINIO.conf
+ /usr/bin/sed -i "s/DOMINIO/$DOMINIO/g" /etc/nginx/sites-available/$DOMINIO.conf
  /usr/bin/sed -i "s/VPHP/$PHP/g" /etc/nginx/sites-available/$DOMINIO.conf
  /usr/bin/ln -s /etc/nginx/sites-available/$DOMINIO.conf /etc/nginx/sites-enabled/$DOMINIO.conf
 fi
 
 clear
 echo "-----------------------------------------------------------------------------------------------------------------"
-echo "| A instalação do apache, php e mysql foram concluídas. "
+echo "| A instalação do nginx, php, phpmyadmin e mysql foram concluídas. "
 echo "| Detalhes: "
 echo "| "
 if [[ $VH == "S" ]]; then

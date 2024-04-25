@@ -3,6 +3,10 @@
 # Objetivo do script: instalar Apache2, PHP 7.4, MySQL e criar vHost de maneira automática.
 # Feito para debian/ubuntu
 #
+# Lembrando que fiz isso para uso próprio e acelerar os deploys dos servidores que gerencio
+# É um script simples e que só agiliza a implantação inicial.
+# Fique a vontade para baixar, melhorar e contribuir com o código.
+#
 # Desenvolvido por Felipe Barreto
 ###############################################################################################
 
