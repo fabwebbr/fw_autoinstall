@@ -32,7 +32,6 @@ if [[ $VH == "S" ]]; then
  echo "---"
 fi
 
-exit;
 
 ##############################################################################################
 ##############################################################################################
@@ -117,8 +116,10 @@ if [[ $VH == "S" ]]; then
 echo "| Sobre o Site: "
 echo "| Pasta do site criado: /var/www/{$DOMINIO}"
 echo "| Arquivo vHost: /etc/apache/sites-available/$DOMINIO"
+echo "| "
 fi
 if [[ $MYSQL == "S" ]]; then
+echo "| "
 echo "| Sobre o MySQL: "
 echo "| Nome BD: $PREFIXOBD"
 echo "| Nome Usuário: $PREFIXOBD"

@@ -1,0 +1,21 @@
+server {
+
+    listen 80;
+    server_name DOMINIO www.DOMINIO;
+
+    # Pasta onde os arquivos do site estão
+    root /var/www/DOMINIO;
+
+    # Ordem de carregamento dos arquivos index (index.php é prioridade)
+    index index.php index.html;
+
+	location ~ \.php$ {
+		fastcgi_pass unix:/run/php/phpVPHP-fpm.sock;
+		include snippets/fastcgi-php.conf;
+	}
+
+    location / {
+       try_files $uri $uri/ /index.php?$args;
+    }
+
+}
