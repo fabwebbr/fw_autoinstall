@@ -50,7 +50,8 @@ clear
 echo "Iniciando o processo..."
 
 # Habilita o ppa:ondrej/php
-sudo add-apt-repository ppa:ondrej/php > /dev/null 2>&1
+echo "Habilita o ppa:ondrej/php..."
+sudo add-apt-repository -y ppa:ondrej/php
 
 # Define o timezone do servidor
 timedatectl set-timezone $timezone > /dev/null 2>&1
