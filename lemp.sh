@@ -41,6 +41,10 @@ fi
 int=$(shuf -i 10-100 -n 1)
 # Gerador de senha aleatória para o admin do BD
 password_db=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c34)
+password_pma=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c30)
+
+#Obter IP do Servidor
+IP=`curl http://ifconfig.me`
 
 clear
 echo "Iniciando o processo..."
@@ -70,9 +74,13 @@ else
  echo "NGINX: Iniciando instalação"
  apt-get --yes install nginx > /dev/null 2>&1
  ufw allow "Nginx Full" > /dev/null 2>&1
- echo "NGINX: Instalando certbot para apache..."
+ rm -rf /var/www/html/index.html
+ wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/index.html -O /var/www/html/index.html
+ wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/logo.png -O /var/www/html/logo.png
+ wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/info.php -O /var/www/html/info.php
 
 # Instalando certbot para nginx
+ echo "NGINX: Instalando certbot para Nginx..."
  apt-get --yes install python3-certbot-nginx > /dev/null 2>&1
 fi
 
@@ -83,7 +91,7 @@ apt --yes install php${PHPPMA}-cli php${PHPPMA}-fpm php${PHPPMA}-mysql php${PHPP
 apt purge apache* --yes > /dev/null 2>&1
 apt install -y phpmyadmin
 
-wget https://github.com/fabwebbr/lemp_fw/raw/main/modelo-vhost-nginx-phpmyadmin.txt -O /etc/nginx/sites-available/phpmyadmin
+wget https://github.com/fabwebbr/fw_autoinstall/raw/main/modelo-vhost-nginx-phpmyadmin.txt -O /etc/nginx/sites-available/phpmyadmin
 /usr/bin/ln -s /etc/nginx/sites-available/phpmyadmin /etc/nginx/sites-enabled/phpmyadmin
 /usr/bin/systemctl restart nginx > /dev/null 2>&1
 
@@ -102,9 +110,19 @@ if [[ $MYSQL == "S" ]]; then
  /usr/bin/mysql -e "CREATE USER $PREFIXOBD@localhost IDENTIFIED BY \"$password_db\""
  /usr/bin/mysql -e "GRANT ALL PRIVILEGES ON $PREFIXOBD.* TO $PREFIXOBD@localhost"
  /usr/bin/mysql -e "FLUSH PRIVILEGES"
+ #PHPMyAdmin
+ /usr/bin/mysql -e "CREATE USER pma_admin@localhost IDENTIFIED BY \"$password_pma\""
+ /usr/bin/mysql -e "GRANT ALL PRIVILEGES ON *.* TO pma_admin@localhost WITH GRANT OPTIONS"
+ /usr/bin/mysql -e "FLUSH PRIVILEGES"
+ echo "Banco de dados criado: "
  echo "Nome BD: $PREFIXOBD" >> /root/acessos-mysql.txt
  echo "Nome Usuário: $PREFIXOBD" >> /root/acessos-mysql.txt
  echo "Senha BD: $password_db" >> /root/acessos-mysql.txt
+ echo "-------------------------------"
+ echo "Acesso PHPMYADMIN: "
+ echo "URL: http://$IP:9000 " >> /root/acessos-mysql.txt
+ echo "Login: pma_admin" >> /root/acessos-mysql.txt
+ echo "Senha: $password_pma" >> /root/acessos-mysql.txt
 fi
 
 if [[ $VH == "S" ]]; then
@@ -127,12 +145,17 @@ echo "| Arquivo vHost: /etc/apache/sites-available/$DOMINIO"
 echo "| "
 fi
 if [[ $MYSQL == "S" ]]; then
-echo "| "
 echo "| Sobre o MySQL: "
 echo "| Nome BD: $PREFIXOBD"
 echo "| Nome Usuário: $PREFIXOBD"
 echo "| Senha BD: $password_db"
+echo "| "
 fi
+echo "| Sobre o PHPMYADMIN: "
+echo "| URL: http://$IP:9000 "
+echo "| Login: pma_admin"
+echo "| Senha: $password_pma"
+echo "| "
 echo "| "
 echo "| Boa sorte :)"
 echo "-----------------------------------------------------------------------------------------------------------------"
