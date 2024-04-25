@@ -49,29 +49,13 @@ IP=`curl http://ifconfig.me`
 clear
 echo "Iniciando o processo..."
 
-# Habilita o ppa:ondrej/php
-echo "Habilita o ppa:ondrej/php..."
-sudo add-apt-repository -y ppa:ondrej/php
-
 # Define o timezone do servidor
 timedatectl set-timezone $timezone > /dev/null 2>&1
 # aplica atualizações
 echo "Aplicando as atualizações do Sistema Operacional..."
 apt-get --yes update > /dev/null 2>&1
 
-# Verifica se o apache já não está instalado
-if [ -d "/etc/apache2" ]; then
- echo "!!! CUIDADO: Já existe uma instalação do apache. Verifique para evitar conflitos.";
- read -p "Deseja desinstalar o Apache? (S ou N): " REMAPACHE
-
-# Se for remover apache, então...
- if [[ $REMAPACHE == "S" ]]; then
-  apt remove apache* -y > /dev/null 2>&1
-  apt purge apache* -y > /dev/null 2>&1
- fi
- /usr/bin/systemctl stop apache* > /dev/null 2>&1
-else
-# Se não estiver, instala o Nginx
+# Instalar o Nginx
  echo "NGINX: Iniciando instalação"
  apt-get --yes install nginx > /dev/null 2>&1
  ufw allow "Nginx Full" > /dev/null 2>&1
@@ -83,7 +67,10 @@ else
 # Instalando certbot para nginx
  echo "NGINX: Instalando certbot para Nginx..."
  apt-get --yes install python3-certbot-nginx > /dev/null 2>&1
-fi
+
+# Habilita o ppa:ondrej/php
+echo "Habilita o ppa:ondrej/php..."
+sudo add-apt-repository --yes ppa:ondrej/php
 
 # Instalando PHP do PHPMYADMIN
 PHPPMA="7.4"
