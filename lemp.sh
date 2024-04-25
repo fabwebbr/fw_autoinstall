@@ -64,11 +64,11 @@ apt-get --yes update > /dev/null 2>&1
  apt-get --yes install nginx > /dev/null 2>&1
  if [ -d "/etc/nginx" ]; then
  ufw allow "Nginx Full" > /dev/null 2>&1
- rm -rf /var/www/html/index.html
- wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/index.html -O /var/www/html/index.html
- wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/logo.png -O /var/www/html/logo.png
- wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/info.php -O /var/www/html/info.php
- wget https://github.com/fabwebbr/fw_autoinstall/raw/main/modelo-vhost-nginx-default.txt -O /etc/nginx/sites-available/default
+ rm -rf /var/www/html/index.html  > /dev/null 2>&1
+ wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/index.html -O /var/www/html/index.html > /dev/null 2>&1
+ wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/logo.png -O /var/www/html/logo.png > /dev/null 2>&1
+ wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/info.php -O /var/www/html/info.php > /dev/null 2>&1
+ wget https://github.com/fabwebbr/fw_autoinstall/raw/main/modelo-vhost-nginx-default.txt -O /etc/nginx/sites-available/default > /dev/null 2>&1
  else
  clear
  echo "A instalação do Nginx falhou... Abortando..."
@@ -81,17 +81,17 @@ apt-get --yes update > /dev/null 2>&1
 
 # Habilita o ppa:ondrej/php
 echo "Habilita o ppa:ondrej/php..."
-sudo add-apt-repository --yes ppa:ondrej/php
+sudo add-apt-repository --yes ppa:ondrej/php  > /dev/null 2>&1
 
 # Instalando PHP do PHPMYADMIN
 PHPPMA="7.4"
 apt install php${PHPPMA} -y > /dev/null 2>&1
 apt --yes install php${PHPPMA}-cli php${PHPPMA}-fpm php${PHPPMA}-mysql php${PHPPMA}-zip php${PHPPMA}-gd php${PHPPMA}-mbstring php${PHPPMA}-curl php${PHPPMA}-xml php${PHPPMA}-bcmath php${PHPPMA}-imagick php${PHPPMA}-intl php${PHPPMA}-soap > /dev/null 2>&1
 apt purge apache* --yes > /dev/null 2>&1
-apt install -y phpmyadmin
+apt install -y phpmyadmin  > /dev/null 2>&1
 
-wget https://github.com/fabwebbr/fw_autoinstall/raw/main/modelo-vhost-nginx-phpmyadmin.txt -O /etc/nginx/sites-available/phpmyadmin
-/usr/bin/ln -s /etc/nginx/sites-available/phpmyadmin /etc/nginx/sites-enabled/phpmyadmin
+wget https://github.com/fabwebbr/fw_autoinstall/raw/main/modelo-vhost-nginx-phpmyadmin.txt -O /etc/nginx/sites-available/phpmyadmin  > /dev/null 2>&1
+/usr/bin/ln -s /etc/nginx/sites-available/phpmyadmin /etc/nginx/sites-enabled/phpmyadmin > /dev/null 2>&1
 /usr/bin/systemctl restart nginx > /dev/null 2>&1
 
 # Instalando php
@@ -113,15 +113,16 @@ if [[ $MYSQL == "S" ]]; then
  /usr/bin/mysql -e "CREATE USER pma_admin@localhost IDENTIFIED BY \"$password_pma\""
  /usr/bin/mysql -e "GRANT ALL PRIVILEGES ON *.* TO pma_admin@localhost WITH GRANT OPTION"
  /usr/bin/mysql -e "FLUSH PRIVILEGES"
- echo "Banco de dados criado: "
+ echo "Banco de dados criado: " >> /root/acessos-mysql.txt
  echo "Nome BD: $PREFIXOBD" >> /root/acessos-mysql.txt
  echo "Nome Usuário: $PREFIXOBD" >> /root/acessos-mysql.txt
  echo "Senha BD: $password_db" >> /root/acessos-mysql.txt
- echo "-------------------------------"
- echo "Acesso PHPMYADMIN: "
+ echo "-------------------------------" >> /root/acessos-mysql.txt
+ echo "Acesso PHPMYADMIN: " >> /root/acessos-mysql.txt
  echo "URL: http://$IP:9000 " >> /root/acessos-mysql.txt
  echo "Login: pma_admin" >> /root/acessos-mysql.txt
  echo "Senha: $password_pma" >> /root/acessos-mysql.txt
+ echo "-------------------------------" >> /root/acessos-mysql.txt
 fi
 
 if [[ $VH == "S" ]]; then
@@ -129,6 +130,7 @@ if [[ $VH == "S" ]]; then
  /usr/bin/cp /tmp/modelo-vhost.txt /etc/nginx/sites-available/$DOMINIO.conf
  /usr/bin/sed -i "s/DOMINIO/$DOMINIO/g" /etc/nginx/sites-available/$DOMINIO.conf
  /usr/bin/sed -i "s/VPHP/$PHP/g" /etc/nginx/sites-available/$DOMINIO.conf
+ /usr/bin/sed -i "s/VPHP/$PHP/g" /etc/nginx/sites-available/default
  /usr/bin/ln -s /etc/nginx/sites-available/$DOMINIO.conf /etc/nginx/sites-enabled/$DOMINIO.conf
 fi
 
