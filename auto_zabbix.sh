@@ -6,10 +6,10 @@
 ##########################################################################
 
 # IP do Zabbix-Server
-SRVIP="51.79.54.148"
+SRVIP="zbx1.fwdc.com.br"
 
 # Nome do servidor
-SRVNAME="server.phpclasses.org"
+SRVNAME="`hostname`"
 
 ##########################################################################
 #
