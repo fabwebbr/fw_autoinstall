@@ -77,7 +77,7 @@ fi
  wget https://github.com/fabwebbr/fw_autoinstall/raw/main/arquivos/logo.png -O /var/www/html/logo.png
 
 # Instalando php 7.4
-sudo add-apt-repository ppa:ondrej/php --quiet > /dev/null 2>&1
+sudo add-apt-repository ppa:ondrej/php --yes
 sudo apt update > /dev/null 2>&1
 if [ -d "/etc/php/${PHP}" ]; then
  echo "PHP: A instalação do php ${PHP} já existe. Pulando esta etapa..."
@@ -93,7 +93,7 @@ fi
 # Instalando Mysql e configurando acesso
 if [[ $MYSQL == "S" ]]; then
  echo "MYSQL: Instalando MySQL..."
- apt-get --yes --quiet install mysql-server > /dev/null 2>&1
+ apt-get --yes --quiet install mysql-server 
  /usr/bin/mysql -e "CREATE DATABASE $PREFIXOBD";
  /usr/bin/mysql -e "CREATE USER $PREFIXOBD@localhost IDENTIFIED BY \"$password_db\""
  /usr/bin/mysql -e "GRANT ALL PRIVILEGES ON $PREFIXOBD.* TO $PREFIXOBD@localhost"

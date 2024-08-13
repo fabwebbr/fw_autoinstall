@@ -81,14 +81,14 @@ apt-get --yes update > /dev/null 2>&1
 
 # Habilita o ppa:ondrej/php
 echo "Habilita o ppa:ondrej/php..."
-sudo add-apt-repository --yes ppa:ondrej/php  > /dev/null 2>&1
+sudo add-apt-repository --yes ppa:ondrej/php 
 
 # Instalando PHP do PHPMYADMIN
 PHPPMA="7.4"
 apt install php${PHPPMA} -y > /dev/null 2>&1
 apt --yes install php${PHPPMA}-cli php${PHPPMA}-fpm php${PHPPMA}-mysql php${PHPPMA}-zip php${PHPPMA}-gd php${PHPPMA}-mbstring php${PHPPMA}-curl php${PHPPMA}-xml php${PHPPMA}-bcmath php${PHPPMA}-imagick php${PHPPMA}-intl php${PHPPMA}-soap > /dev/null 2>&1
 apt purge apache* --yes > /dev/null 2>&1
-apt install -y phpmyadmin  > /dev/null 2>&1
+apt install -y phpmyadmin
 
 wget https://github.com/fabwebbr/fw_autoinstall/raw/main/modelo-vhost-nginx-phpmyadmin.txt -O /etc/nginx/sites-available/phpmyadmin  > /dev/null 2>&1
 /usr/bin/ln -s /etc/nginx/sites-available/phpmyadmin /etc/nginx/sites-enabled/phpmyadmin > /dev/null 2>&1
